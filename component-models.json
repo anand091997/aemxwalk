@@ -231,6 +231,13 @@
         "value": "",
         "label": "Author",
         "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "surname",
+        "value": "",
+        "label": "Surname",
+        "valueType": "string"
       }
     ]
   }

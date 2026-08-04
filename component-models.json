@@ -231,13 +231,6 @@
         "value": "",
         "label": "Author",
         "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "surname",
-        "value": "wderdtfghj",
-        "label": "Surname",
-        "valueType": "string"
       }
     ]
   }

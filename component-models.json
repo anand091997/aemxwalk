@@ -221,14 +221,14 @@
       {
         "component": "richtext",
         "name": "quote",
-        "value": "dfcgvbn",
+        "value": "",
         "label": "Quote",
         "valueType": "string"
       },
       {
         "component": "text",
         "name": "author",
-        "value": "sdfghjgfds",
+        "value": "",
         "label": "Author",
         "valueType": "string"
       }

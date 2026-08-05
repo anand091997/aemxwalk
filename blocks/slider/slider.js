@@ -25,23 +25,20 @@ export default async function decorate(block) {
     await loadScript(`${codeBase}/scripts/slick.min.js`);
   }
 
-  // Read config fallback from block metadata
-  const blockConfig = readBlockConfig(block);
+  // Read config from block authoring rows or data attributes with default fallbacks
+  const config = readBlockConfig(block);
 
-  let dots = blockConfig.dots !== undefined
-    ? blockConfig.dots === 'true'
+  let dots = config.dots !== undefined
+    ? config.dots === 'true'
     : block.dataset.dots !== 'false';
 
-  let arrows = blockConfig.arrows !== undefined
-    ? blockConfig.arrows === 'true'
+  let arrows = config.arrows !== undefined
+    ? config.arrows === 'true'
     : block.dataset.arrows !== 'false';
 
-  let autoplay = blockConfig.autoplay !== undefined
-    ? blockConfig.autoplay === 'true'
+  let autoplay = config.autoplay !== undefined
+    ? config.autoplay === 'true'
     : block.dataset.autoplay === 'true';
-
-  const slidesWrapper = document.createElement('div');
-  slidesWrapper.className = 'slider-slides';
 
   const rows = [...block.children];
   const configKeys = ['dots', 'arrows', 'autoplay'];
@@ -80,6 +77,18 @@ export default async function decorate(block) {
     slideRows.push(row);
   });
 
+  // Render placeholder if no slides are added yet
+  if (slideRows.length === 0) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'slider-placeholder';
+    placeholder.textContent = 'Slider Block (Add Slide items)';
+    block.replaceChildren(placeholder);
+    return;
+  }
+
+  const slidesWrapper = document.createElement('div');
+  slidesWrapper.className = 'slider-slides';
+
   slideRows.forEach((row, idx) => {
     const slide = document.createElement('div');
     slide.className = 'slider-slide';
@@ -113,8 +122,8 @@ export default async function decorate(block) {
 
   block.replaceChildren(slidesWrapper);
 
-  // Initialize Slick Carousel with dynamic dots & arrows, default autoplay: false
-  if (window.jQuery && window.jQuery.fn.slick) {
+  // Initialize Slick Carousel only if there are multiple slides
+  if (slideRows.length > 1 && window.jQuery && window.jQuery.fn.slick) {
     window.jQuery(slidesWrapper).slick({
       dots,
       arrows,

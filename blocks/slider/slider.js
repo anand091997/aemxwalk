@@ -1,22 +1,79 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
+import {
+  createOptimizedPicture,
+  loadCSS,
+  loadScript,
+  readBlockConfig,
+} from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
-export default function decorate(block) {
-  const slidesContainer = document.createElement('div');
-  slidesContainer.className = 'slider-slides-container';
+export default async function decorate(block) {
+  const codeBase = window.hlx?.codeBasePath || '';
+
+  // Load local Slick CSS dependencies
+  await Promise.all([
+    loadCSS(`${codeBase}/styles/slick.css`),
+    loadCSS(`${codeBase}/styles/slick-theme.css`),
+  ]);
+
+  // Load local jQuery if not already present
+  if (!window.jQuery) {
+    await loadScript(`${codeBase}/scripts/jquery.min.js`);
+  }
+
+  // Load local Slick JS if not already initialized
+  if (window.jQuery && !window.jQuery.fn.slick) {
+    await loadScript(`${codeBase}/scripts/slick.min.js`);
+  }
+
+  // Read config from block authoring rows or data attributes with defaults
+  const config = readBlockConfig(block);
+
+  const dots = config.dots !== undefined ? config.dots === 'true' : block.dataset.dots !== 'false';
+  const infinite = config.infinite !== undefined
+    ? config.infinite === 'true'
+    : block.dataset.infinite !== 'false';
+  const speed = parseInt(config.speed || block.dataset.speed || '500', 10);
+  const slidesToShow = parseInt(
+    config['slides-to-show'] || config.slidestoshow || block.dataset.slidesToShow || '1',
+    10,
+  );
+  const slidesToScroll = parseInt(
+    config['slides-to-scroll'] || config.slidestoscroll || block.dataset.slidesToScroll || '1',
+    10,
+  );
+  const autoplay = config.autoplay !== undefined
+    ? config.autoplay === 'true'
+    : block.dataset.autoplay !== 'false';
+  const autoplaySpeed = parseInt(
+    config['autoplay-speed'] || config.autoplayspeed || block.dataset.autoplaySpeed || '3000',
+    10,
+  );
+  const imageSize = config['image-size'] || config.imagesize || block.dataset.imageSize || '1200';
 
   const slidesWrapper = document.createElement('div');
   slidesWrapper.className = 'slider-slides';
 
-  const navDots = document.createElement('div');
-  navDots.className = 'slider-nav-dots';
-
   const rows = [...block.children];
+  const configKeys = [
+    'dots',
+    'infinite',
+    'speed',
+    'slides-to-show',
+    'slides-to-scroll',
+    'autoplay',
+    'autoplay-speed',
+    'image-size',
+  ];
 
   rows.forEach((row, idx) => {
+    // Skip configuration rows if authored as key-value pairs
+    const firstColText = row.firstElementChild?.textContent?.trim().toLowerCase();
+    if (configKeys.includes(firstColText)) {
+      return;
+    }
+
     const slide = document.createElement('div');
     slide.className = 'slider-slide';
-    if (idx === 0) slide.classList.add('active');
     moveInstrumentation(row, slide);
 
     while (row.firstElementChild) {
@@ -32,65 +89,33 @@ export default function decorate(block) {
     });
 
     slide.querySelectorAll('picture > img').forEach((img) => {
-      const optimizedPic = createOptimizedPicture(img.src, img.alt, idx === 0, [{ width: '1200' }]);
+      const optimizedPic = createOptimizedPicture(
+        img.src,
+        img.alt,
+        idx === 0,
+        [{ width: imageSize }],
+      );
       moveInstrumentation(img, optimizedPic.querySelector('img'));
       img.closest('picture').replaceWith(optimizedPic);
     });
 
     slidesWrapper.append(slide);
-
-    const dot = document.createElement('button');
-    dot.className = 'slider-dot';
-    if (idx === 0) dot.classList.add('active');
-    dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
-    dot.addEventListener('click', () => {
-      const activeSlide = slidesWrapper.querySelector('.slider-slide.active');
-      const activeDot = navDots.querySelector('.slider-dot.active');
-      if (activeSlide) activeSlide.classList.remove('active');
-      if (activeDot) activeDot.classList.remove('active');
-      slide.classList.add('active');
-      dot.classList.add('active');
-    });
-    navDots.append(dot);
   });
 
-  slidesContainer.append(slidesWrapper);
+  block.replaceChildren(slidesWrapper);
 
-  if (rows.length > 1) {
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'slider-btn slider-btn-prev';
-    prevBtn.setAttribute('aria-label', 'Previous slide');
-    prevBtn.innerHTML = '&#10094;';
-    prevBtn.addEventListener('click', () => {
-      const current = slidesWrapper.querySelector('.slider-slide.active');
-      let target = current ? current.previousElementSibling : null;
-      if (!target) target = slidesWrapper.lastElementChild;
-      const index = [...slidesWrapper.children].indexOf(target);
-      const dots = [...navDots.children];
-      dots.forEach((d) => d.classList.remove('active'));
-      [...slidesWrapper.children].forEach((s) => s.classList.remove('active'));
-      target.classList.add('active');
-      if (dots[index]) dots[index].classList.add('active');
+  // Initialize Slick Carousel with dynamic or default options
+  if (window.jQuery && window.jQuery.fn.slick) {
+    window.jQuery(slidesWrapper).slick({
+      dots,
+      infinite,
+      speed,
+      slidesToShow,
+      slidesToScroll,
+      autoplay,
+      autoplaySpeed,
+      arrows: true,
+      adaptiveHeight: true,
     });
-
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'slider-btn slider-btn-next';
-    nextBtn.setAttribute('aria-label', 'Next slide');
-    nextBtn.innerHTML = '&#10095;';
-    nextBtn.addEventListener('click', () => {
-      const current = slidesWrapper.querySelector('.slider-slide.active');
-      let target = current ? current.nextElementSibling : null;
-      if (!target) target = slidesWrapper.firstElementChild;
-      const index = [...slidesWrapper.children].indexOf(target);
-      const dots = [...navDots.children];
-      dots.forEach((d) => d.classList.remove('active'));
-      [...slidesWrapper.children].forEach((s) => s.classList.remove('active'));
-      target.classList.add('active');
-      if (dots[index]) dots[index].classList.add('active');
-    });
-
-    slidesContainer.append(prevBtn, nextBtn);
   }
-
-  block.replaceChildren(slidesContainer, navDots);
 }

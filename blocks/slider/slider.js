@@ -25,19 +25,19 @@ export default async function decorate(block) {
     await loadScript(`${codeBase}/scripts/slick.min.js`);
   }
 
-  // Read dynamic block configuration (e.g. dots, arrows)
-  const config = readBlockConfig(block);
+  // Read config fallback from block metadata
+  const blockConfig = readBlockConfig(block);
 
-  const dots = config.dots !== undefined
-    ? config.dots === 'true'
+  let dots = blockConfig.dots !== undefined
+    ? blockConfig.dots === 'true'
     : block.dataset.dots !== 'false';
 
-  const arrows = config.arrows !== undefined
-    ? config.arrows === 'true'
+  let arrows = blockConfig.arrows !== undefined
+    ? blockConfig.arrows === 'true'
     : block.dataset.arrows !== 'false';
 
-  const autoplay = config.autoplay !== undefined
-    ? config.autoplay === 'true'
+  let autoplay = blockConfig.autoplay !== undefined
+    ? blockConfig.autoplay === 'true'
     : block.dataset.autoplay === 'true';
 
   const slidesWrapper = document.createElement('div');
@@ -45,14 +45,42 @@ export default async function decorate(block) {
 
   const rows = [...block.children];
   const configKeys = ['dots', 'arrows', 'autoplay'];
+  const slideRows = [];
 
-  rows.forEach((row, idx) => {
-    // Skip configuration rows if authored as key-value pairs
-    const firstColText = row.firstElementChild?.textContent?.trim().toLowerCase();
-    if (configKeys.includes(firstColText)) {
+  rows.forEach((row) => {
+    const aueProp = row.dataset?.aueProp?.toLowerCase();
+    const cols = [...row.children];
+    const firstColText = cols[0]?.textContent?.trim().toLowerCase();
+    const fullText = row.textContent?.trim().toLowerCase();
+    const hasPicture = !!row.querySelector('picture');
+    const hasHeading = !!row.querySelector('h1, h2, h3, h4, h5, h6');
+
+    // 1. Check AUE data attribute configuration
+    if (aueProp && configKeys.includes(aueProp)) {
+      if (aueProp === 'dots') dots = fullText === 'true';
+      if (aueProp === 'arrows') arrows = fullText === 'true';
+      if (aueProp === 'autoplay') autoplay = fullText === 'true';
       return;
     }
 
+    // 2. Check key-value configuration row
+    if (firstColText && configKeys.includes(firstColText)) {
+      const val = cols[1]?.textContent?.trim().toLowerCase();
+      if (firstColText === 'dots') dots = val !== 'false';
+      if (firstColText === 'arrows') arrows = val !== 'false';
+      if (firstColText === 'autoplay') autoplay = val === 'true';
+      return;
+    }
+
+    // 3. Skip bare boolean configuration rows without picture/heading
+    if (!hasPicture && !hasHeading && (fullText === 'true' || fullText === 'false')) {
+      return;
+    }
+
+    slideRows.push(row);
+  });
+
+  slideRows.forEach((row, idx) => {
     const slide = document.createElement('div');
     slide.className = 'slider-slide';
     moveInstrumentation(row, slide);
@@ -85,7 +113,7 @@ export default async function decorate(block) {
 
   block.replaceChildren(slidesWrapper);
 
-  // Initialize Slick Carousel with dynamic dots & arrows, autoplay: false default
+  // Initialize Slick Carousel with dynamic dots & arrows, default autoplay: false
   if (window.jQuery && window.jQuery.fn.slick) {
     window.jQuery(slidesWrapper).slick({
       dots,

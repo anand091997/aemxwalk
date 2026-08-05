@@ -257,45 +257,6 @@
     ]
   },
   {
-    "id": "slider",
-    "fields": [
-      {
-        "component": "select",
-        "name": "dots",
-        "label": "Show Dots",
-        "value": "true",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "True",
-            "value": "true"
-          },
-          {
-            "name": "False",
-            "value": "false"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "arrows",
-        "label": "Show Arrows",
-        "value": "true",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "True",
-            "value": "true"
-          },
-          {
-            "name": "False",
-            "value": "false"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "slide",
     "fields": [
       {

@@ -69,9 +69,9 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgb(0 0 0 / 10%) 0%,
-    rgb(0 0 0 / 40%) 50%,
-    rgb(0 0 0 / 85%) 100%
+    rgb(0 0 0 / 5%) 0%,
+    rgb(0 0 0 / 25%) 50%,
+    rgb(0 0 0 / 45%) 100%
   );
   z-index: 2;
   pointer-events: none;
@@ -99,7 +99,7 @@
   font-size: 1.5rem;
   line-height: 1.2;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgb(0 0 0 / 60%);
+  text-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
 .slider .slider-slide-body p {
@@ -108,7 +108,7 @@
   color: #f0f0f0;
   font-size: 0.95rem;
   line-height: 1.4;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 60%);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 10%);
 }
 
 .slider .slider-slide-body .button-container {
@@ -124,7 +124,7 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -140,7 +140,7 @@
   height: 44px;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgb(0 0 0 / 40%);
+  background-color: rgb(0 0 0 / 10%);
   border-radius: 50%;
   transition: background-color 0.2s ease;
 }
@@ -155,7 +155,7 @@
 
 .slider .slick-prev:hover,
 .slider .slick-next:hover {
-  background-color: rgb(0 0 0 / 75%);
+  background-color: rgb(0 0 0 / 15%);
 }
 
 .slider .slick-prev::before,

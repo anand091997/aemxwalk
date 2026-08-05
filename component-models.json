@@ -216,43 +216,21 @@
     ]
   },
   {
-    "id": "quote",
+    "id": "slide",
     "fields": [
       {
-        "component": "richtext",
-        "name": "quote",
-        "value": "",
-        "label": "Quote",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "author",
-        "value": "",
-        "label": "Author",
-        "valueType": "string"
-      },
-      {
-        "component": "select",
-        "name": "classes",
-        "value": "",
-        "label": "Background Color",
-        "description": "The quote background color",
+        "component": "reference",
         "valueType": "string",
-        "options": [
-          {
-            "name": "Red",
-            "value": "bg-red"
-          },
-          {
-            "name": "Green",
-            "value": "bg-green"
-          },
-          {
-            "name": "Blue",
-            "value": "bg-blue"
-          }
-        ]
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "valueType": "string"
       }
     ]
   }

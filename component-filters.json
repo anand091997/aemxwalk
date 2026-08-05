@@ -16,7 +16,7 @@
       "cards",
       "columns",
       "fragment",
-      "quote"
+      "slider"
     ]
   },
   {
@@ -38,6 +38,12 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "slider",
+    "components": [
+      "slide"
     ]
   }
 ]

@@ -25,13 +25,22 @@ export default async function decorate(block) {
     await loadScript(`${codeBase}/scripts/slick.min.js`);
   }
 
-  // Read config from block authoring rows or data attributes with defaults
+  // Read config from block authoring rows or data attributes with default fallbacks
   const config = readBlockConfig(block);
 
-  const dots = config.dots !== undefined ? config.dots === 'true' : block.dataset.dots !== 'false';
+  const dots = config.dots !== undefined
+    ? config.dots === 'true'
+    : block.dataset.dots === 'true';
+
+  // Default autoplay to false and infinite to false
+  const autoplay = config.autoplay !== undefined
+    ? config.autoplay === 'true'
+    : block.dataset.autoplay === 'true';
+
   const infinite = config.infinite !== undefined
     ? config.infinite === 'true'
-    : block.dataset.infinite !== 'false';
+    : block.dataset.infinite === 'true';
+
   const speed = parseInt(config.speed || block.dataset.speed || '500', 10);
   const slidesToShow = parseInt(
     config['slides-to-show'] || config.slidestoshow || block.dataset.slidesToShow || '1',
@@ -41,9 +50,6 @@ export default async function decorate(block) {
     config['slides-to-scroll'] || config.slidestoscroll || block.dataset.slidesToScroll || '1',
     10,
   );
-  const autoplay = config.autoplay !== undefined
-    ? config.autoplay === 'true'
-    : block.dataset.autoplay !== 'false';
   const autoplaySpeed = parseInt(
     config['autoplay-speed'] || config.autoplayspeed || block.dataset.autoplaySpeed || '3000',
     10,
@@ -104,7 +110,7 @@ export default async function decorate(block) {
 
   block.replaceChildren(slidesWrapper);
 
-  // Initialize Slick Carousel with dynamic or default options
+  // Initialize Slick Carousel with default autoplay: false and infinite: false
   if (window.jQuery && window.jQuery.fn.slick) {
     window.jQuery(slidesWrapper).slick({
       dots,

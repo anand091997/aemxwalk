@@ -257,49 +257,6 @@
     ]
   },
   {
-    "id": "slider",
-    "fields": [
-      {
-        "component": "select",
-        "name": "autoplay",
-        "label": "Autoplay",
-        "value": "true",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "True",
-            "value": "true"
-          },
-          {
-            "name": "False",
-            "value": "false"
-          }
-        ]
-      },
-      {
-        "component": "text",
-        "name": "autoplaySpeed",
-        "label": "Autoplay Speed (ms)",
-        "value": "3000",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "slidesToShow",
-        "label": "Slides To Show",
-        "value": "1",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "imageSize",
-        "label": "Image Size (px)",
-        "value": "1200",
-        "valueType": "string"
-      }
-    ]
-  },
-  {
     "id": "slide",
     "fields": [
       {

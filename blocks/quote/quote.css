@@ -26,34 +26,31 @@
     bottom: -8px;
     height: 5px;
     width: 30px;
-    background-color: darkgray;
-}.block.quote {
-    background-color: #ccc;
-    padding: 0 0 24px;
-    display: flex;
-    flex-direction: column;
-    margin: 1rem 0;
 }
 
-.block.quote blockquote {
-    margin: 16px;
-    text-indent: 0;
+.block.quote.bg-red {
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
-.block.quote > div:last-child > div {
-    margin: 0 16px;
-    font-size: small;
-    font-style: italic;
-    position: relative;
+.block.quote.bg-red > div:last-child > div::after {
+    background-color: #991b1b;
 }
 
-.block.quote > div:last-child > div::after {
-    content: "";
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: -8px;
-    height: 5px;
-    width: 30px;
-    background-color: darkgray;
+.block.quote.bg-green {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.block.quote.bg-green > div:last-child > div::after {
+    background-color: #166534;
+}
+
+.block.quote.bg-blue {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.block.quote.bg-blue > div:last-child > div::after {
+    background-color: #1e40af;
 }

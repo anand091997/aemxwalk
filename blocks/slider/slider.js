@@ -25,7 +25,7 @@ export default async function decorate(block) {
     await loadScript(`${codeBase}/scripts/slick.min.js`);
   }
 
-  // Read config from block authoring rows or data attributes with default fallbacks
+  // Read dynamic block configuration (e.g. dots, arrows)
   const config = readBlockConfig(block);
 
   const dots = config.dots !== undefined
@@ -36,44 +36,15 @@ export default async function decorate(block) {
     ? config.arrows === 'true'
     : block.dataset.arrows !== 'false';
 
-  // Default autoplay and infinite to false
   const autoplay = config.autoplay !== undefined
     ? config.autoplay === 'true'
     : block.dataset.autoplay === 'true';
-
-  const infinite = config.infinite !== undefined
-    ? config.infinite === 'true'
-    : block.dataset.infinite === 'true';
-
-  const speed = parseInt(config.speed || block.dataset.speed || '500', 10);
-  const slidesToShow = parseInt(
-    config['slides-to-show'] || config.slidestoshow || block.dataset.slidesToShow || '1',
-    10,
-  );
-  const slidesToScroll = parseInt(
-    config['slides-to-scroll'] || config.slidestoscroll || block.dataset.slidesToScroll || '1',
-    10,
-  );
-  const autoplaySpeed = parseInt(
-    config['autoplay-speed'] || config.autoplayspeed || block.dataset.autoplaySpeed || '3000',
-    10,
-  );
 
   const slidesWrapper = document.createElement('div');
   slidesWrapper.className = 'slider-slides';
 
   const rows = [...block.children];
-  const configKeys = [
-    'dots',
-    'arrows',
-    'infinite',
-    'speed',
-    'slides-to-show',
-    'slides-to-scroll',
-    'autoplay',
-    'autoplay-speed',
-    'image-size',
-  ];
+  const configKeys = ['dots', 'arrows', 'autoplay'];
 
   rows.forEach((row, idx) => {
     // Skip configuration rows if authored as key-value pairs
@@ -114,17 +85,17 @@ export default async function decorate(block) {
 
   block.replaceChildren(slidesWrapper);
 
-  // Initialize Slick Carousel with dots, arrows, and default autoplay: false, infinite: false
+  // Initialize Slick Carousel with dynamic dots & arrows, autoplay: false default
   if (window.jQuery && window.jQuery.fn.slick) {
     window.jQuery(slidesWrapper).slick({
       dots,
       arrows,
-      infinite,
-      speed,
-      slidesToShow,
-      slidesToScroll,
+      infinite: false,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
       autoplay,
-      autoplaySpeed,
+      autoplaySpeed: 3000,
       adaptiveHeight: true,
     });
   }

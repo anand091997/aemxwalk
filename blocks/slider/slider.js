@@ -30,9 +30,13 @@ export default async function decorate(block) {
 
   const dots = config.dots !== undefined
     ? config.dots === 'true'
-    : block.dataset.dots === 'true';
+    : block.dataset.dots !== 'false';
 
-  // Default autoplay to false and infinite to false
+  const arrows = config.arrows !== undefined
+    ? config.arrows === 'true'
+    : block.dataset.arrows !== 'false';
+
+  // Default autoplay and infinite to false
   const autoplay = config.autoplay !== undefined
     ? config.autoplay === 'true'
     : block.dataset.autoplay === 'true';
@@ -54,7 +58,6 @@ export default async function decorate(block) {
     config['autoplay-speed'] || config.autoplayspeed || block.dataset.autoplaySpeed || '3000',
     10,
   );
-  const imageSize = config['image-size'] || config.imagesize || block.dataset.imageSize || '1200';
 
   const slidesWrapper = document.createElement('div');
   slidesWrapper.className = 'slider-slides';
@@ -62,6 +65,7 @@ export default async function decorate(block) {
   const rows = [...block.children];
   const configKeys = [
     'dots',
+    'arrows',
     'infinite',
     'speed',
     'slides-to-show',
@@ -99,7 +103,7 @@ export default async function decorate(block) {
         img.src,
         img.alt,
         idx === 0,
-        [{ width: imageSize }],
+        [{ width: '1200' }],
       );
       moveInstrumentation(img, optimizedPic.querySelector('img'));
       img.closest('picture').replaceWith(optimizedPic);
@@ -110,17 +114,17 @@ export default async function decorate(block) {
 
   block.replaceChildren(slidesWrapper);
 
-  // Initialize Slick Carousel with default autoplay: false and infinite: false
+  // Initialize Slick Carousel with dots, arrows, and default autoplay: false, infinite: false
   if (window.jQuery && window.jQuery.fn.slick) {
     window.jQuery(slidesWrapper).slick({
       dots,
+      arrows,
       infinite,
       speed,
       slidesToShow,
       slidesToScroll,
       autoplay,
       autoplaySpeed,
-      arrows: true,
       adaptiveHeight: true,
     });
   }
